@@ -1,0 +1,14 @@
+/**:
+  ros__parameters:
+    filter_chain_parameter_name: "filter1"
+    filter1:
+      name: cart_body_filter
+      type: laser_filters/LaserScanBoxFilter
+      params:
+        box_frame: "laser"
+        max_x: 0.245
+        min_x: -0.245
+        max_y: 0.05
+        min_y: -0.05
+        max_z: 1.0
+        min_z: -1.0
