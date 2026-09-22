@@ -14,7 +14,7 @@ def generate_launch_description():
     rplidar_launch_file = os.path.join(rplidar_dir, 'launch', 'rplidar_a1_launch.py')
     
     # Path to our new filter config
-    filter_params = '/home/rpd/xlerobot/src/XLeRobot/nav2/nav2/params/laser_filter.yaml'
+    filter_params = '/home/rpd/semantic_nav/src/semantic_nav/nav2/nav2/params/laser_filter.yaml'
 
     return LaunchDescription([
 

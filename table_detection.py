@@ -1,7 +1,7 @@
 import pyrealsense2 as rs, numpy as np, cv2
 from ultralytics import YOLO
 
-SERIAL = "336222071373"
+SERIAL = "419522072867"
 model = YOLO("yolo11n.pt")
 TABLE_ID = 60
 

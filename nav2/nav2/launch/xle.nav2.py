@@ -8,9 +8,9 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
 
     # Pointing strictly to the new opus_params.yaml (MPPI, holonomic, goal-yaw enforced)
-    map_file    = '/home/rpd/xlerobot/src/XLeRobot/nav2/nav2/map/xle_room_map.yaml'
-    filter_yaml = '/home/rpd/xlerobot/src/XLeRobot/nav2/nav2/params/laser_filter.yaml'
-    nav2_params = '/home/rpd/xlerobot/src/XLeRobot/nav2/nav2/params/my_nav2_params.yaml'
+    map_file    = '/home/rpd/semantic_nav/src/semantic_nav/nav2/nav2/map/xle_room_map.yaml'
+    filter_yaml = '/home/rpd/semantic_nav/src/semantic_nav/nav2/nav2/params/laser_filter.yaml'
+    nav2_params = '/home/rpd/semantic_nav/src/semantic_nav/nav2/nav2/params/my_nav2_params.yaml'
 
     rplidar_node = Node(
         package='rplidar_ros',

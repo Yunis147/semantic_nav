@@ -21,6 +21,17 @@ class StaticCameraTF(Node):
         t.transform.rotation.w = 1.0
         self.broadcaster.sendTransform(t)
 
-rclpy.init()
-node = StaticCameraTF()
-rclpy.spin(node)
+def main():
+    rclpy.init()
+    node = StaticCameraTF()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()

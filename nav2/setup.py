@@ -30,6 +30,9 @@ setup(
         'console_scripts': [
             'odom = nav2.base_odom:main',
             'laser_node = nav2.laser:main',
+            'teleop = nav2.teleop:main',
+            'static_camera_tf = nav2.static_camera_tf:main',
+            'table_detector = nav2.point_to_map:main',
         ],
     },
 )
