@@ -264,7 +264,7 @@ class TableDetectorNode(Node):
         """Transform a point from camera_link frame to map frame."""
         pt = PointStamped()
         pt.header.frame_id = 'camera_link'
-        pt.header.stamp = self.get_clock().now().to_msg()
+        pt.header.stamp = rclpy.time.Time().to_msg()  # time zero — matches static TF
         pt.point.x = x
         pt.point.y = y
         pt.point.z = z

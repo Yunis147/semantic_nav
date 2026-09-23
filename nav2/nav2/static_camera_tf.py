@@ -8,7 +8,7 @@ class StaticCameraTF(Node):
         super().__init__('static_camera_tf')
         self.broadcaster = StaticTransformBroadcaster(self)
         t = TransformStamped()
-        t.header.stamp = self.get_clock().now().to_msg()
+        t.header.stamp = rclpy.time.Time().to_msg()  # time zero = valid for all time
         t.header.frame_id = 'base_link'
         t.child_frame_id = 'camera_link'
         # measure these by hand from your robot: camera position relative to base_link origin, in meters
