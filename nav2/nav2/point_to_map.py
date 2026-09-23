@@ -27,7 +27,7 @@ import json
 import os
 import math
 
-SERIAL = "336222071373"
+SERIAL = "419522072867"
 
 # two detections closer than this (in meters) are the same table
 DEDUP_DISTANCE = 0.5
