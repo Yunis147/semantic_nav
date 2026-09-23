@@ -23,7 +23,7 @@ def generate_launch_description():
             SetRemap(src='/scan', dst='/scan_raw'),
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(rplidar_launch_file),
-                launch_arguments={'serial_port': '/dev/ttyUSB1'}.items()
+                launch_arguments={'serial_port': '/dev/xle_lidar'}.items()
             )
         ]),
 

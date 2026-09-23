@@ -28,7 +28,7 @@ setup(
     extras_require={'test': ['pytest']},
     entry_points={
         'console_scripts': [
-            'odom = nav2.base_odom:main',
+            'odom = nav2.odom:main',
             'laser_node = nav2.laser:main',
             'teleop = nav2.teleop:main',
             'static_camera_tf = nav2.static_camera_tf:main',
