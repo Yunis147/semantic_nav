@@ -266,22 +266,23 @@ class TableDetectorNode(Node):
         Uses time-zero lookup to get the latest available transform
         rather than requesting a specific timestamp (the odom node
         publishes TF slower than the detection loop runs).
+        No timeout — just skip the frame if TF isn't ready yet.
         """
-        pt = PointStamped()
-        pt.header.frame_id = 'camera_link'
-        pt.header.stamp = rclpy.time.Time().to_msg()
-        pt.point.x = x
-        pt.point.y = y
-        pt.point.z = z
         try:
             transform = self.tf_buffer.lookup_transform(
-                'map', 'camera_link', rclpy.time.Time(),
-                timeout=rclpy.duration.Duration(seconds=1.0))
-            map_point = do_transform_point(pt, transform)
-            return map_point.point.x, map_point.point.y, map_point.point.z
+                'map', 'camera_link', rclpy.time.Time())
         except Exception as e:
             self.get_logger().warn(f'TF lookup failed: {e}')
             return None
+
+        pt = PointStamped()
+        pt.header.frame_id = 'camera_link'
+        pt.header.stamp = transform.header.stamp  # use the transform's own timestamp
+        pt.point.x = x
+        pt.point.y = y
+        pt.point.z = z
+        map_point = do_transform_point(pt, transform)
+        return map_point.point.x, map_point.point.y, map_point.point.z
 
     def detect_loop(self):
         # grab frames from local RealSense
