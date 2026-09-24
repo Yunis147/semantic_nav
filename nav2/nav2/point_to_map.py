@@ -261,18 +261,22 @@ class TableDetectorNode(Node):
             return []
 
     def camera_point_to_map(self, x, y, z):
-        """Transform a point from camera_link frame to map frame."""
-        now = self.get_clock().now()
+        """Transform a point from camera_link frame to map frame.
+
+        Uses time-zero lookup to get the latest available transform
+        rather than requesting a specific timestamp (the odom node
+        publishes TF slower than the detection loop runs).
+        """
         pt = PointStamped()
         pt.header.frame_id = 'camera_link'
-        pt.header.stamp = now.to_msg()
+        pt.header.stamp = rclpy.time.Time().to_msg()
         pt.point.x = x
         pt.point.y = y
         pt.point.z = z
         try:
             transform = self.tf_buffer.lookup_transform(
-                'map', 'camera_link', now,
-                timeout=rclpy.duration.Duration(seconds=0.5))
+                'map', 'camera_link', rclpy.time.Time(),
+                timeout=rclpy.duration.Duration(seconds=1.0))
             map_point = do_transform_point(pt, transform)
             return map_point.point.x, map_point.point.y, map_point.point.z
         except Exception as e:
