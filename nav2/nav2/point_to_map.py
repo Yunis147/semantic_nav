@@ -26,6 +26,8 @@ import struct
 import json
 import os
 import math
+import threading
+import time as pytime
 
 SERIAL = "419522072867"
 
@@ -197,8 +199,10 @@ class TableDetectorNode(Node):
         self.sock = None
         self.connect_to_server()
 
-        # run detection loop at ~5Hz
-        self.timer = self.create_timer(0.2, self.detect_loop)
+        # run detection in a separate thread so it doesn't block TF updates
+        self._running = True
+        self._detect_thread = threading.Thread(target=self._detect_thread_fn, daemon=True)
+        self._detect_thread.start()
 
     def connect_to_server(self):
         """Connect (or reconnect) to the laptop YOLO server."""
@@ -284,9 +288,26 @@ class TableDetectorNode(Node):
         map_point = do_transform_point(pt, transform)
         return map_point.point.x, map_point.point.y, map_point.point.z
 
-    def detect_loop(self):
+    def _detect_thread_fn(self):
+        """Detection loop running in its own thread.
+
+        This keeps wait_for_frames() from blocking the spin thread,
+        so TF messages keep flowing into the buffer.
+        """
+        # give TF a moment to populate
+        pytime.sleep(3.0)
+        self.get_logger().info("Detection thread started")
+
+        while self._running:
+            try:
+                self._detect_once()
+            except Exception as e:
+                self.get_logger().error(f"Detection error: {e}")
+            pytime.sleep(0.2)  # ~5 Hz
+
+    def _detect_once(self):
         # grab frames from local RealSense
-        frames = self.align.process(self.pipe.wait_for_frames(timeout_ms=15000))
+        frames = self.align.process(self.pipe.wait_for_frames(timeout_ms=5000))
         color = frames.get_color_frame()
         depth = frames.get_depth_frame()
         if not color or not depth:
@@ -321,6 +342,9 @@ class TableDetectorNode(Node):
                     self.get_logger().info("All 10 tables found — ignoring new detections")
 
     def destroy_node(self):
+        self._running = False
+        if self._detect_thread.is_alive():
+            self._detect_thread.join(timeout=3.0)
         # save whatever we have on shutdown
         self.store.save()
         self.get_logger().info(f"Tables saved to {self.store.file_path}")
@@ -333,8 +357,10 @@ class TableDetectorNode(Node):
 def main():
     rclpy.init()
     node = TableDetectorNode()
+    executor = rclpy.executors.MultiThreadedExecutor()
+    executor.add_node(node)
     try:
-        rclpy.spin(node)
+        executor.spin()
     except KeyboardInterrupt:
         pass
     finally:
