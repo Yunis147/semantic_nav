@@ -181,7 +181,7 @@ class TableDetectorNode(Node):
             table_file, dedup_dist, max_tables, min_hits, self.get_logger())
 
         # --- TF setup ---
-        self.tf_buffer = Buffer()
+        self.tf_buffer = Buffer(node=self)
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
         # --- RealSense setup (local on Pi) ---
