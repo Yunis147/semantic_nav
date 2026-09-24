@@ -262,15 +262,17 @@ class TableDetectorNode(Node):
 
     def camera_point_to_map(self, x, y, z):
         """Transform a point from camera_link frame to map frame."""
+        now = self.get_clock().now()
         pt = PointStamped()
         pt.header.frame_id = 'camera_link'
-        pt.header.stamp = rclpy.time.Time().to_msg()  # time zero — matches static TF
+        pt.header.stamp = now.to_msg()
         pt.point.x = x
         pt.point.y = y
         pt.point.z = z
         try:
             transform = self.tf_buffer.lookup_transform(
-                'map', 'camera_link', rclpy.time.Time())
+                'map', 'camera_link', now,
+                timeout=rclpy.duration.Duration(seconds=0.5))
             map_point = do_transform_point(pt, transform)
             return map_point.point.x, map_point.point.y, map_point.point.z
         except Exception as e:
